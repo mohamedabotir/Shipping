@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "E7vpxv5ucg0hs/Ry+2XDFoIzgwzmwR0v/ev/mzEFYaQ=",
+  "Source": "Shipping.API",
+  "BasePath": "_content/Shipping.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

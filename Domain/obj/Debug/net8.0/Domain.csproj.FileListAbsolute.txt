@@ -1,0 +1,15 @@
+/home/threading/DistributedSystem Assisment/Shipping/Domain/bin/Debug/net8.0/Domain.deps.json
+/home/threading/DistributedSystem Assisment/Shipping/Domain/bin/Debug/net8.0/Domain.dll
+/home/threading/DistributedSystem Assisment/Shipping/Domain/bin/Debug/net8.0/Domain.pdb
+/home/threading/DistributedSystem Assisment/Shipping/Domain/bin/Debug/net8.0/Common.dll
+/home/threading/DistributedSystem Assisment/Shipping/Domain/bin/Debug/net8.0/Common.pdb
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.csproj.AssemblyReference.cache
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.AssemblyInfoInputs.cache
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.AssemblyInfo.cs
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.csproj.CoreCompileInputs.cache
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.csproj.Up2Date
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.dll
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/refint/Domain.dll
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.pdb
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/ref/Domain.dll
