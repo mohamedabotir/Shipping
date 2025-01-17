@@ -1,7 +1,7 @@
 using Common.Events;
 using Common.Result;
 
-namespace Application.Usecases;
+namespace Infrastructure.Consumer.Usecases;
 
 public interface IPlaceShipmentRequestUsecase
 {

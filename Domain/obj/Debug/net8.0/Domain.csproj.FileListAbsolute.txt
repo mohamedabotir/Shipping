@@ -13,3 +13,4 @@
 /home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/refint/Domain.dll
 /home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.pdb
 /home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/ref/Domain.dll
+/home/threading/DistributedSystem Assisment/Shipping/Domain/obj/Debug/net8.0/Domain.sourcelink.json

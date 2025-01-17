@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "F0GUddkFnFg=",
+  "dgSpecHash": "wdUVu1MnfYc=",
   "success": true,
   "projectFilePath": "/home/threading/DistributedSystem Assisment/Shipping/Application/Application.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/threading/.nuget/packages/microsoft.extensions.dependencyinjection/9.0.1/microsoft.extensions.dependencyinjection.9.0.1.nupkg.sha512",
+    "/home/threading/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/9.0.1/microsoft.extensions.dependencyinjection.abstractions.9.0.1.nupkg.sha512"
+  ],
   "logs": []
 }

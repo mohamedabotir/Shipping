@@ -1,14 +1,25 @@
-using Common.Result;
 using Domain.Entity;
 using Domain.Repositories;
+using Infrastructure.Consumer.Context;
+using Infrastructure.Consumer.Context.Pocos;
+using Infrastructure.Context;
 
-namespace Infrastructure.Repository;
+namespace Infrastructure.Consumer.Repository;
 
 public class ShippingRepository: IShippingRepository
 {
-    public Task<Result> Save(ShippingOrder shippingOrder)
+    private readonly ShoppingContextFactory _shippingOrderContext;
+    public ShippingRepository(ShoppingContextFactory shippingOrderContext)
     {
-       Console.Write($"Document being processed : {shippingOrder.PackageOrder.PurchaseOrderNumber}");
-       throw new NotImplementedException();
+        _shippingOrderContext = shippingOrderContext;
+    }
+    public async Task Save(ShippingOrder shippingOrder)
+    {
+        await using var context = _shippingOrderContext.CreateDataBaseContext();
+        var entity = new ShippingOrderPoco()
+            .MapDomainToPoco(shippingOrder);
+       await context
+           .AddAsync(entity);
+       var result = await context.SaveChangesAsync();
     }
 }

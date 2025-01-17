@@ -15,3 +15,4 @@
 /home/threading/DistributedSystem Assisment/Shipping/Application/obj/Debug/net8.0/refint/Application.dll
 /home/threading/DistributedSystem Assisment/Shipping/Application/obj/Debug/net8.0/Application.pdb
 /home/threading/DistributedSystem Assisment/Shipping/Application/obj/Debug/net8.0/ref/Application.dll
+/home/threading/DistributedSystem Assisment/Shipping/Application/obj/Debug/net8.0/Application.sourcelink.json

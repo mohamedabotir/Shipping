@@ -1,14 +1,15 @@
-using Application.Usecases;
 using Common.Events;
-using Common.Result;
- 
-namespace Infrastructure.Consumer;
+using Domain.Repositories;
+using Infrastructure.Consumer;
+using Infrastructure.Consumer.Usecases;
+
+namespace Application.Handlers;
 
 public class EventHandler(IPlaceShipmentRequestUsecase shipmentRequestUsecase):IEventHandler
 {
-   
-    public async Task<Result> On(PurchaseOrderApproved @event)
+
+    public  async Task On(PurchaseOrderApproved @event)
     {
-        return await shipmentRequestUsecase.CreateShipment(@event);
+      await  shipmentRequestUsecase.CreateShipment(@event);
     }
 }

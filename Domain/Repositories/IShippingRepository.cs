@@ -5,5 +5,5 @@ namespace Domain.Repositories;
 
 public interface IShippingRepository
 {
-    Task<Result> Save(ShippingOrder shippingOrder);
+    Task Save(ShippingOrder shippingOrder);
 }

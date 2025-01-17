@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Application.Handlers;
 using Common.Events;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,14 +41,10 @@ namespace Infrastructure.Consumer;
                 if (consumeResult?.Message == null) continue;
                 try
                 {
-
-               
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
                     using (var sc = scope.ServiceProvider.CreateScope())
                     {
-
                         var options = new JsonSerializerOptions() { Converters = { new EventJsonConverter() } };
                         var @event = JsonSerializer.Deserialize<DomainEventBase>(consumeResult.Message.Value, options);
                         var handlers = _eventHandler.GetType().GetMethod("On", new Type[] { @event.GetType() });
@@ -56,9 +53,8 @@ namespace Infrastructure.Consumer;
                             throw new ArgumentNullException($"Handler Didn't support method with type : {@event.GetType().Name} ");
                         handlers.Invoke(_eventHandler, new Object[] { @event });
                         consumer.Commit(consumeResult);
-
                     }
-                }
+                    }
                 }
                 catch (Exception e)
                 {

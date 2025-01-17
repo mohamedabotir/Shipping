@@ -6,16 +6,16 @@ namespace Domain.Entity;
 
 public class ShippingOrder:AggregateRoot
 {
-    public ShippingOrder(Guid  guid,long orderId,User userAddress,PackageOrder packageOrder)
+    public ShippingOrder(Guid  guid,long orderId,User customer,PackageOrder packageOrder)
     {
         Guid = guid;
         Id = orderId;
-        UserAddress = userAddress;
+        Customer = customer;
         PackageOrder = packageOrder;
     }
 
     public PackageOrder PackageOrder { get;private set; }
 
-    public User UserAddress { get; private set; }
+    public User Customer { get; private set; }
     
 }

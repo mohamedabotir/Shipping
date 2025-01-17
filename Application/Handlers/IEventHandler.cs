@@ -1,9 +1,8 @@
 using Common.Events;
-using Common.Result;
 
-namespace Infrastructure.Consumer;
+namespace Application.Handlers;
 
 public interface IEventHandler
 {
-    public  Task<Result> On(PurchaseOrderApproved @event);
+    public  Task On(PurchaseOrderApproved @event);
 }

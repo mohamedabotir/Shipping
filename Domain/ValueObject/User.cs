@@ -3,22 +3,23 @@ using Common.ValueObject;
 
 namespace Domain.ValueObject;
 
-public class User: ValueObject<User>
+public sealed class User: ValueObject<User>
 {
     public string Name { get;private set; }
     public Address Address { get;private set; }
     public string PhoneNumber { get;private set; }
 
-    private User(string name, Address address)
+    private User(string name, Address address,string phoneNumber)
     {
          Name = name;
          Address = address;
+         PhoneNumber = phoneNumber;
     }
 
-    public static Result<User> CreateInstance(Maybe<string> name, Address address)
+    public static Result<User> CreateInstance(Maybe<string> name, Address address,string phoneNumber)
     {
       return  name.ToResult("Name Cannot be Empty")
-            .Map(e=>new User(e,address));
+            .Map(e=>new User(e,address,phoneNumber));
     }
 
     protected override bool EqualsCore(User other)
