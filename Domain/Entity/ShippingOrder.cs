@@ -22,14 +22,23 @@ public class ShippingOrder:AggregateRoot
     public Result ShipOrder()
     {
         if(PackageOrder.OrderStage != PurchaseOrderStage.Approved)
-           return Result.Fail("Order on approved stage to Start Shipping it.");
+           return Result.Fail("Order should be on approved stage to Start Shipping it.");
         PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
             PackageOrder.PurchaseOrderNumber,
             PurchaseOrderStage.BeingShipped, PackageOrder.PurchaseOrderGuid);
         AddDomainEvent(new OrderBeingShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
         return Result.Ok();
     }
-
+    public Result MarkOrderAsShipped()
+    {
+        if(PackageOrder.OrderStage != PurchaseOrderStage.BeingShipped)
+            return Result.Fail("Order should be on BeingShipped stage to finish  shipment .");
+        PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
+            PackageOrder.PurchaseOrderNumber,
+            PurchaseOrderStage.Shipped, PackageOrder.PurchaseOrderGuid);
+        AddDomainEvent(new OrderShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
+        return Result.Ok();
+    }
     public User Customer { get; private set; }
     
 }

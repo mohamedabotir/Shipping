@@ -1,7 +1,7 @@
 using Common.Events;
 using Common.Handlers;
 
-namespace Application.Handlers;
+namespace Infrastructure.EventHandlers;
 
 public class OrderBeingShippedHandler(IEventStore eventStore):IEventHandler<OrderBeingShipped>
 {

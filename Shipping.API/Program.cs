@@ -16,6 +16,7 @@ using Infrastructure.Consumer.Context;
 using Infrastructure.Consumer.Repository;
 using Infrastructure.Consumer;
 using Infrastructure.Context;
+using Infrastructure.EventHandlers;
 using Infrastructure.GraphQL;
 using Infrastructure.MessageBroker;
 using Infrastructure.MessageBroker.Producers;
@@ -57,11 +58,16 @@ builder.Services.AddTransient<IProducer,Producer>();
 // UseCases
 builder.Services.AddTransient<IPlaceShipmentRequestUsecase, PlaceShipmentRequestUsecase>();
 builder.Services.AddTransient<IShipOrderUsecase, ShipOrderUseCase>();
+builder.Services.AddTransient<IOrderShippedUseCase, OrderShippedUseCase>();
+
 // Handlers
 builder.Services.AddTransient<IEventHandler, EventHandler>();
 builder.Services.AddTransient<IEventHandler<OrderBeingShipped>, OrderBeingShippedHandler>();
+builder.Services.AddTransient<IEventHandler<OrderShipped>, OrderShippedHandler>();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient<IRequestHandler<StartShippingCommand,Result>, StartShippingHandler>();
+builder.Services.AddTransient<IRequestHandler<OrderShippedCommand,Result>, DocumentAsShippedHandler>();
+
 builder.Services.AddTransient<IProducer, Producer>();
 builder.Services.AddTransient<IEventDispatcher, EventDispatcher>();
 builder.Services.AddTransient<GraphQlClient>();
@@ -82,7 +88,7 @@ app.MapGet("/order/{poNumber}", async (string poNumber,GraphQlClient ql) =>
     })
     .WithName("approve  order")
     .WithOpenApi();
-app.MapPost("/shipOrder/{poNumber}", async (string poNumber,IMediator mediator,GraphQlClient graphQlClient) =>
+app.MapPost("/shipOrder/{poNumber}/startShip", async (string poNumber,IMediator mediator,GraphQlClient graphQlClient) =>
     {
         
        var isPurchaseOrderActive = await graphQlClient.GetActivationStatus(poNumber) == ActivationStatus.Active;
@@ -94,6 +100,14 @@ app.MapPost("/shipOrder/{poNumber}", async (string poNumber,IMediator mediator,G
        return Results.Ok(result);
     })
     .WithName("start ship order")
+    .WithOpenApi();
+app.MapPost("/shipOrder/{poNumber}/shipped", async (string poNumber,IMediator mediator) =>
+    {
+        
+        var result =await mediator.Send(new OrderShippedCommand(poNumber));
+        return Results.Ok(result);
+    })
+    .WithName("order shipped")
     .WithOpenApi();
 
 app.Run();
