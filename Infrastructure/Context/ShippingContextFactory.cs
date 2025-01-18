@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context;
 
-public class ShoppingContextFactory
+public class ShippingContextFactory
 {
     private readonly Action<DbContextOptionsBuilder> _configureDbContext;
 
-    public ShoppingContextFactory(Action<DbContextOptionsBuilder> configureDbContext)
+    public ShippingContextFactory(Action<DbContextOptionsBuilder> configureDbContext)
     {
         _configureDbContext = configureDbContext;
     }
