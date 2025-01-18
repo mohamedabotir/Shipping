@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "vulzVXBA0QvfBSpf4zWm/cGsrJGOWFEOso8E3t+YZK51ct2yOMOIdTBCj3rnx2IWyGuNEL+gCIrlQnya3demQg==",
+  "success": true,
+  "projectFilePath": "/home/threading/DistributedSystem Assisment/Shipping/ShippingOrderDb/ShippingOrder/ShippingOrder.sqlproj",
+  "expectedPackageFiles": [
+    "/home/threading/.nuget/packages/microsoft.netframework.referenceassemblies/1.0.0/microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
+    "/home/threading/.nuget/packages/microsoft.netframework.referenceassemblies.net46/1.0.0/microsoft.netframework.referenceassemblies.net46.1.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
