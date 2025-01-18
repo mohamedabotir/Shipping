@@ -59,6 +59,7 @@ builder.Services.AddTransient<IProducer,Producer>();
 builder.Services.AddTransient<IPlaceShipmentRequestUsecase, PlaceShipmentRequestUsecase>();
 builder.Services.AddTransient<IShipOrderUsecase, ShipOrderUseCase>();
 builder.Services.AddTransient<IOrderShippedUseCase, OrderShippedUseCase>();
+builder.Services.AddTransient<IClosingShipmentRequestUseCase, ClosingShipmentRequestUseCase>();
 
 // Handlers
 builder.Services.AddTransient<IEventHandler, EventHandler>();

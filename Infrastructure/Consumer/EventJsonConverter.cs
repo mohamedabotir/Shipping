@@ -24,6 +24,7 @@ public class EventJsonConverter: JsonConverter<DomainEventBase>
         return disc switch
         {
             nameof(PurchaseOrderApproved) => JsonSerializer.Deserialize<PurchaseOrderApproved>(json, getCustomerOptions(options)),
+            nameof(OrderClosed) => JsonSerializer.Deserialize<OrderClosed>(json, getCustomerOptions(options)),
             _ => throw new JsonException($"Event Type {disc} not supported yet!")
         };
 

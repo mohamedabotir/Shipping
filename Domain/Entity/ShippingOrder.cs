@@ -39,6 +39,16 @@ public class ShippingOrder:AggregateRoot
         AddDomainEvent(new OrderShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
         return Result.Ok();
     }
+
+    public Result MarkOrderAsDelivered()
+    {
+        if(PackageOrder.OrderStage != PurchaseOrderStage.Shipped)
+            return Result.Fail("Order should be on Shipped stage to close  shipment .");
+        PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
+            PackageOrder.PurchaseOrderNumber,
+            PurchaseOrderStage.Closed, PackageOrder.PurchaseOrderGuid);
+        return Result.Ok();
+    }
     public User Customer { get; private set; }
     
 }

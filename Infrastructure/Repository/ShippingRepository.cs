@@ -11,7 +11,8 @@ namespace Infrastructure.Consumer.Repository;
 public class ShippingRepository: IShippingRepository
 {
     private readonly ShippingContextFactory _shoppingContextFactory;
-    private readonly ShippingOrderContext _shippingOrderContext ;
+    private ShippingOrderContext _shippingOrderContext;
+
     public ShippingRepository(ShippingContextFactory shippingOrderContext,ShippingOrderContext shoppingContext)
     {
         _shoppingContextFactory = shippingOrderContext;
@@ -42,5 +43,21 @@ public class ShippingRepository: IShippingRepository
             .Single(e => e.OrderId == orderId);
         shippingOrder.OrderStage = stage;
       return  Task.CompletedTask;
+    }
+
+    public Task<Result<ShippingOrder>> GetShippingOrderByPurchaseOrderNumberWithFactory(string purchaseOrderNumber)
+    {
+        using var context = _shoppingContextFactory.CreateDataBaseContext();
+        _shippingOrderContext = context;
+        return GetShippingOrderByPurchaseOrderNumber(purchaseOrderNumber);
+    }
+
+    public Task UpdateShippingStageWithFactory(int orderId, PurchaseOrderStage stage)
+    {
+        using var context = _shoppingContextFactory.CreateDataBaseContext();
+        _shippingOrderContext = context;
+        UpdateShippingStage(orderId, stage);
+        context.SaveChanges();
+        return Task.CompletedTask;
     }
 }
