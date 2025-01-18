@@ -23,8 +23,10 @@ public class ShippingOrder:AggregateRoot
     {
         if(PackageOrder.OrderStage != PurchaseOrderStage.Approved)
            return Result.Fail("Order on approved stage to Start Shipping it.");
-        PackageOrder.OrderStage = PurchaseOrderStage.BeingShipped;
-        AddDomainEvent(new OrderBeingShipped(Guid,PackageOrder.PurchaseOrderNumber));
+        PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
+            PackageOrder.PurchaseOrderNumber,
+            PurchaseOrderStage.BeingShipped, PackageOrder.PurchaseOrderGuid);
+        AddDomainEvent(new OrderBeingShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
         return Result.Ok();
     }
 

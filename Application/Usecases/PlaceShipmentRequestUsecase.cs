@@ -19,7 +19,8 @@ public class PlaceShipmentRequestUsecase(IShippingRepository shippingRepository,
             var user = User.CreateInstance(request.CustomerName, address.Value,request.CustomerPhoneNumber);
             if (user.IsFailure)
                 return Result.Fail(user.Message);
-            var package = new PackageOrder(request.TotalAmount,request.ActivationStatus,request.PurchaseOrderNumber,request.OrderStage);
+            var package = new PackageOrder(request.TotalAmount,request.ActivationStatus,request.PurchaseOrderNumber,request.OrderStage,
+                request.PurchaseOrderId);
             var shippingOrder = new ShippingOrder(Guid.NewGuid(),0, user.Value,package);
             await shippingRepository.Save(shippingOrder);
             return Result.Ok();

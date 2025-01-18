@@ -7,6 +7,6 @@ public class OrderBeingShippedHandler(IEventStore eventStore):IEventHandler<Orde
 {
     public async Task HandleAsync(OrderBeingShipped @event, CancellationToken cancellationToken = default)
     {
-        await  eventStore.SaveEventAsync(@event.PurchaseOrderGuid,@event);
+        await  eventStore.SaveEventAsync(@event.PurchaseOrderGuid,@event,["purchaseOrder"]);
     }
 }

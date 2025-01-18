@@ -36,6 +36,8 @@ public class ShippingOrderPoco
     [Required]
     public PurchaseOrderStage OrderStage { get; set; }
 
+    [Required]
+    public Guid PurchaseOrderGuid { get; set; }
     public Result<ShippingOrder> MapPocoToDomain()
     {
         var address = Address.CreateInstance(CustomerAddress);
@@ -47,7 +49,7 @@ public class ShippingOrderPoco
         
         if (combinationResult.IsFailure)
             return Result.Fail<ShippingOrder>(combinationResult.Message);
-        var package = new PackageOrder(totalAmount.Value,ActivationStatus,PurchaseOrderNumber,OrderStage);
+        var package = new PackageOrder(totalAmount.Value,ActivationStatus,PurchaseOrderNumber,OrderStage,PurchaseOrderGuid);
         var shippingOrder = new ShippingOrder(Guid,OrderId, user.Value,package);
         return Result.Ok(shippingOrder);
     }
@@ -62,6 +64,7 @@ public class ShippingOrderPoco
         ActivationStatus = shippingOrder.PackageOrder.ActivationStatus;
         PurchaseOrderNumber = shippingOrder.PackageOrder.PurchaseOrderNumber;
         OrderStage = shippingOrder.PackageOrder.OrderStage;
+        PurchaseOrderGuid = shippingOrder.PackageOrder.PurchaseOrderGuid;
         return this;
     }
 }

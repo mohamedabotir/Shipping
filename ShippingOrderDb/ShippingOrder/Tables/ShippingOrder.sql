@@ -7,5 +7,7 @@ CREATE TABLE [ShippingOrder] (
     TotalAmount DECIMAL(18,2) NOT NULL,  
     IsActive INT NOT NULL,              
     PurchaseOrderNumber NVARCHAR(25) NOT NULL, 
+    PurchaseOrderGuid UNIQUEIDENTIFIER NOT NULL, 
     OrderStage INT NOT NULL             
 );
+
