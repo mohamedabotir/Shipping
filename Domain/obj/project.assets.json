@@ -17,8 +17,8 @@
   "libraries": {
     "Common/1.0.0": {
       "type": "project",
-      "path": "../../POContext/Common/Common.csproj",
-      "msbuildProject": "../../POContext/Common/Common.csproj"
+      "path": "../Common/Common.csproj",
+      "msbuildProject": "../Common/Common.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -51,8 +51,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj": {
-              "projectPath": "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj"
+            "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj": {
+              "projectPath": "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj"
             }
           }
         }

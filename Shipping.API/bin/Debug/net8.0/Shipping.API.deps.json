@@ -9,7 +9,6 @@
       "Shipping.API/1.0.0": {
         "dependencies": {
           "Application": "1.0.0",
-          "Common": "1.0.0",
           "Domain": "1.0.0",
           "Infrastructure": "1.0.0",
           "MediatR": "11.1.0",
@@ -1335,7 +1334,6 @@
       "Infrastructure/1.0.0": {
         "dependencies": {
           "Application": "1.0.0",
-          "Common": "1.0.0",
           "Confluent.Kafka": "2.8.0",
           "Domain": "1.0.0",
           "GraphQL.Client": "6.1.0",

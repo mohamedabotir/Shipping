@@ -4,14 +4,14 @@
     "/home/threading/DistributedSystem Assisment/Shipping/Domain/Domain.csproj": {}
   },
   "projects": {
-    "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj": {
+    "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj",
+        "projectUniqueName": "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj",
         "projectName": "Common",
-        "projectPath": "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj",
+        "projectPath": "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj",
         "packagesPath": "/home/threading/.nuget/packages/",
-        "outputPath": "/home/threading/DistributedSystem Assisment/POContext/Common/obj/",
+        "outputPath": "/home/threading/DistributedSystem Assisment/Shipping/Common/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/threading/.nuget/NuGet/NuGet.Config"
@@ -85,8 +85,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj": {
-                "projectPath": "/home/threading/DistributedSystem Assisment/POContext/Common/Common.csproj"
+              "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj": {
+                "projectPath": "/home/threading/DistributedSystem Assisment/Shipping/Common/Common.csproj"
               }
             }
           }

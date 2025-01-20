@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build">
-  <Sdk Name="Microsoft.Build.Sql" Version="0.2.0-preview" />
+  <Sdk Name="Microsoft.Build.Sql" Version="1.0.0-rc1" />
   <PropertyGroup>
     <Name>ShippingOrder</Name>
     <ProjectGuid>{A59FA0FE-0D26-4166-9EC6-F767F5CA60D5}</ProjectGuid>

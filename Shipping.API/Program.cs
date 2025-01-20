@@ -74,13 +74,10 @@ builder.Services.AddTransient<IEventDispatcher, EventDispatcher>();
 builder.Services.AddTransient<GraphQlClient>();
 builder.Services.AddHostedService<ConsumerHostingService>();
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
+ 
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
+ 
 app.UseHttpsRedirection();
 app.MapGet("/order/{poNumber}", async (string poNumber,GraphQlClient ql) =>
     {
