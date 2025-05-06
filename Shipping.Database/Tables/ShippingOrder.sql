@@ -1,4 +1,4 @@
-CREATE TABLE [ShippingOrder] (
+﻿CREATE TABLE [ShippingOrder] (
     OrderId INT IDENTITY(1,1) PRIMARY KEY, 
     Guid UNIQUEIDENTIFIER NOT NULL,       
     CustomerName NVARCHAR(50) NOT NULL, 
