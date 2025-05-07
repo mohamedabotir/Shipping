@@ -1,0 +1,75 @@
+name: .NET Test & Coverage
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies (Shipping.Testing only)
+        run: dotnet restore ./Shipping.Testing
+
+      - name: Build test project
+        run: dotnet build ./Shipping.Testing --no-restore
+
+      - name: Run tests with coverage
+        run: dotnet test ./Shipping.Testing --no-build --collect:"XPlat Code Coverage" --results-directory TestResults /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/
+
+      - name: Extract coverage report
+        run: |
+          mkdir -p coverage
+          mv TestResults/*/coverage.cobertura.xml coverage/ || echo "No coverage file found"
+
+      - name: Extract coverage percentage
+        run: |
+          if [[ ! -f coverage/coverage.cobertura.xml ]]; then
+            echo "Error: coverage.cobertura.xml not found."
+            exit 1
+          fi
+
+          COVERAGE=$(grep -oP '(?<=line-rate=")[0-9.]+(?=")' coverage/coverage.cobertura.xml | head -n 1)
+
+          if [[ -z "$COVERAGE" || ! "$COVERAGE" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "Invalid or missing coverage value."
+            exit 1
+          fi
+
+          COVERAGE_INT=$(awk "BEGIN { printf(\"%.0f\", $COVERAGE * 100) }")
+          echo "coverage=$COVERAGE_INT" >> $GITHUB_ENV
+          echo "Extracted Coverage: $COVERAGE_INT%"
+
+      - name: Debug coverage value
+        run: | 
+         echo "Coverage extracted is: ${{ env.coverage }}%"
+    
+      - name: Update coverage badge in README.md
+        continue-on-error: true
+        run: |
+          BADGE_URL="https://img.shields.io/badge/coverage-${{ env.coverage }}%25-brightgreen"
+
+          if grep -q "https://img.shields.io/badge/coverage-" README.md; then
+            echo "Updating existing badge..."
+            sed -i "s|!\[Coverage\](https://img.shields.io/badge/coverage-[0-9]*%25-brightgreen)|![Coverage]($BADGE_URL)|" README.md
+          else
+            echo "Adding new badge to README.md"
+            echo "![Coverage]($BADGE_URL)" >> README.md
+          fi
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update coverage badge to ${{ env.coverage }}%"
+          git push
