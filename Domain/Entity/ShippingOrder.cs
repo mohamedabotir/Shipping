@@ -58,6 +58,9 @@ public class ShippingOrder:AggregateRoot
         Guid = @event.ShippingOrderGuid;
         Id = @event.ShippingOrderId;
         Customer = customer.Value;
+    }    
+    public void Apply(OrderShipped @event) {
+        PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus, @event.PoNumber, PackageOrder.OrderStage, @event.PurchaseOrderGuid);
     }
 
     public Result MarkOrderAsDelivered()

@@ -42,6 +42,7 @@ try
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
             BsonClassMap.RegisterClassMap<DomainEventBase>();
             BsonClassMap.RegisterClassMap<OrderBeingShipped>();
+            BsonClassMap.RegisterClassMap<OrderShipped>();
             BsonClassMap.RegisterClassMap<PurchaseOrderApproved>();
             BsonClassMap.RegisterClassMap<EventModel>();
             BsonSerializer.RegisterSerializer(typeof(decimal), new DecimalSerializer(BsonType.Decimal128));

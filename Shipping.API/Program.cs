@@ -70,6 +70,8 @@ builder.Services.AddTransient<IRequestHandler<OrderShippedCommand,Result>, Docum
 builder.Services.AddTransient<IProducer, Producer>();
 builder.Services.AddTransient<IEventDispatcher, EventDispatcher>();
 builder.Services.AddTransient<GraphQlClient>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddHostedService<ConsumerHostingService>();
 var app = builder.Build();
  
@@ -77,6 +79,9 @@ var app = builder.Build();
     app.UseSwaggerUI();
  
 app.UseHttpsRedirection();
+app.UseMiddleware<CorrelationMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.MapGet("/order/{poNumber}", async (string poNumber,GraphQlClient ql) =>
     {
         var result = await ql.GetActivationStatus(poNumber);

@@ -1,4 +1,5 @@
 using Application.Commands;
+using Common.Events;
 using Common.Repository;
 using Common.Result;
 using Domain.Entity;
@@ -6,22 +7,19 @@ using Domain.Repositories;
 
 namespace Application.Usecases;
 
-public class OrderShippedUseCase(IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IOrderShippedUseCase
+public class OrderShippedUseCase(IEventSourcing<ShippingOrder> eventSourcing,IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IOrderShippedUseCase
 {
     public async Task<Result> MarkDocumentAsShipped(OrderShippedCommand shippedCommand)
     {
         using (unitOfWork)
         {
-            var shippingOrder =await shippingRepository
-                .GetShippingOrderByPurchaseOrderNumber(shippedCommand.purchaseNumber);
-            if(shippingOrder.IsFailure)
-                return Result.Fail(shippingOrder.Message);
-            var shipmentResult = shippingOrder.Value.MarkOrderAsShipped();
+            var shippingOrder = await eventSourcing.GetByIdAsync(shippedCommand.purchaseNumber);
+            var shipmentResult = shippingOrder.MarkOrderAsShipped();
             if (shipmentResult.IsFailure)
-                return Result.Fail(shippingOrder.Message);
-            await shippingRepository.UpdateShippingStage((int)shippingOrder.Value.Id,
-                shippingOrder.Value.PackageOrder.OrderStage);
-            await unitOfWork.SaveChangesAsync(shippingOrder.Value);
+                return Result.Fail(shipmentResult.Message);
+            await shippingRepository.UpdateShippingStage((int)shippingOrder.Id,
+                shippingOrder.PackageOrder.OrderStage);
+            await unitOfWork.SaveChangesAsync(shippingOrder);
             return Result.Ok();
         }    
     }

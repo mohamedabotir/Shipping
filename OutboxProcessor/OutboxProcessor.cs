@@ -32,6 +32,9 @@ public class OutboxProcessor
 
     public async Task RunAsync(CancellationToken cancellationToken)
     {
+        try
+        {
+
         var unprocessed = await _eventRepo.GetUnprocessedEventsAsync();
         foreach (var evt in unprocessed)
         {
@@ -44,6 +47,12 @@ public class OutboxProcessor
             {
                 Log.Error($"❌ Failed to process event {evt.Id}: {ex.Message}");
             }
+        }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"❌ Failed to process : {ex.Message}");
+
         }
 
         Log.Error("✅ Finished processing outbox events.");

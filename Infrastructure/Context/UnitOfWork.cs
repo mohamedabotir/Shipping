@@ -5,21 +5,39 @@ using Common.Repository;
 using Domain.Entity;
 using Domain.Repositories;
 using Infrastructure.Context;
+using Infrastructure.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Consumer.Context;
 
-public class UnitOfWork(ShippingOrderContext dbContext, IServiceProvider serviceProvider,IEventDispatcher eventDispatcher, IEventSourcing<ShippingOrder> eventSourcing)
+public class UnitOfWork(ShippingOrderContext dbContext, IServiceProvider serviceProvider,IEventDispatcher eventDispatcher,
+    IHttpContextAccessor httpContextAccessor, IEventSourcing<ShippingOrder> eventSourcing)
     : IUnitOfWork<ShippingOrder>
 {
     public async Task<int> SaveChangesAsync(ShippingOrder aggregate,CancellationToken cancellationToken = default)
     {
-     
-        var result = await dbContext.SaveChangesAsync(cancellationToken);
-        if (aggregate.GetUncommittedEvents().Any())
-        await eventSourcing.SaveAsync(aggregate);
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+        var correlationId = string.Empty;
 
-        return result;
+        try
+        {
+            correlationId = httpContextAccessor.HttpContext!.GetCorrelationId();
+            var result = await dbContext.SaveChangesAsync(cancellationToken);
+
+            await eventSourcing.SaveAsync(aggregate);
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            var exceptionMessage =
+                $"An error occured while Process Request please use this correlation id and contact help desk team {correlationId}";
+            throw new InvalidOperationException(exceptionMessage, ex);
+        }
     }
 
 
