@@ -19,11 +19,11 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restore dependencies (PO.Test only)
-        run: dotnet restore ./PO.Test
+      - name: Restore dependencies (Shipping.Testing only)
+        run: dotnet restore ./Shipping.Testing
 
       - name: Build test project
-        run: dotnet build ./PO.Test --no-restore
+        run: dotnet build ./Shipping.Testing --no-restore
 
       - name: Run tests with coverage
         run: dotnet test ./Shipping.Testing --no-build --collect:"XPlat Code Coverage" --results-directory TestResults /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/
