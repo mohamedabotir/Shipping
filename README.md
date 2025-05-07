@@ -1,5 +1,10 @@
 # Shipping Service
-![Coverage](https://img.shields.io/badge/coverage-0%25-brightgreen)
+
+![GitHub repo size](https://img.shields.io/github/repo-size/mohamedabotir/Shipping?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/mohamedabotir/Shipping?style=social)
+![example workflow](https://github.com/mohamedabotir/Shipping/actions/workflows/dotnet.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-66%25-brightgreen)
+---
 This document outlines the design and implementation details of the **Shipping Service** using **Domain-Driven Design (DDD)** , **Kafka**, **MongoDB**, **SQL Server**, and **Docker**.
 
 ---
