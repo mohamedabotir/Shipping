@@ -1,6 +1,6 @@
 # Shipping Service
 ![Coverage](https://img.shields.io/badge/coverage-0%25-brightgreen)
-This document outlines the design and implementation details of the **Shipping Service** using **Domain-Driven Design (DDD)**, **Kafka**, **MongoDB**, **SQL Server**, and **Docker**.
+This document outlines the design and implementation details of the **Shipping Service** using **Domain-Driven Design (DDD)** , **Kafka**, **MongoDB**, **SQL Server**, and **Docker**.
 
 ---
 
