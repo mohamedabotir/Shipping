@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Consumer.Context;
 
-public class UnitOfWork(ShippingOrderContext dbContext, IServiceProvider serviceProvider,IEventDispatcher eventDispatcher,
+public class UnitOfWork(ShippingOrderContext dbContext, IServiceProvider serviceProvider,
     IHttpContextAccessor httpContextAccessor, IEventSourcing<ShippingOrder> eventSourcing)
     : IUnitOfWork<ShippingOrder>
 {

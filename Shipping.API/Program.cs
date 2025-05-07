@@ -28,6 +28,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using EventHandler = Application.Handlers.EventHandler;
 using Domain.Entity;
+using Infrastructure.Configs;
 
 var builder = WebApplication.CreateBuilder(args);
 Action<DbContextOptionsBuilder> dbContextConfiguration = (e => e.UseSqlServer(builder.Configuration.GetConnectionString("ShippingOrder")));
@@ -39,9 +40,12 @@ builder.Services.Configure<Topic>(builder.Configuration.GetSection("Topic"));
 builder.Services.Configure<TopicShippingOrders>(builder.Configuration.GetSection("TopicShippingOrders"));
 builder.Services.Configure<ShippingOrderConfig>(builder.Configuration.GetSection("MongoConfig"));
 builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection("ProducerConfig"));
-builder.Services.Configure<PurchaseOrderGraphQLEndpoint>(builder.Configuration.GetSection(nameof(PurchaseOrderGraphQLEndpoint)));
+builder.Services.Configure<ElkLog>(builder.Configuration.GetSection("ElkLog"));
 
- 
+builder.Services.Configure<PurchaseOrderGraphQLEndpoint>(builder.Configuration.GetSection(nameof(PurchaseOrderGraphQLEndpoint)));
+SerilogConfigurator.Configure(builder.Configuration);
+
+
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 BsonClassMap.RegisterClassMap<DomainEventBase>();
 BsonClassMap.RegisterClassMap<OrderBeingShipped>();
