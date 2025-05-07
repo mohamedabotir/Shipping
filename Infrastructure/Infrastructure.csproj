@@ -22,4 +22,10 @@
       <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Common">
+        <HintPath>..\Deps\Common.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

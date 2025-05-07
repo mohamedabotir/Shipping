@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\POContext\Common\Common.csproj" />
+      <Reference Include="Common">
+        <HintPath>..\Deps\Common.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

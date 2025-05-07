@@ -15,4 +15,10 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Common">
+        <HintPath>..\Deps\Common.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
