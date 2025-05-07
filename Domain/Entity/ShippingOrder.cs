@@ -1,6 +1,7 @@
 using Common.Constants;
 using Common.Entity;
 using Common.Events;
+using Common.Exceptions;
 using Common.Result;
 using Common.ValueObject;
 using Domain.ValueObject;
@@ -16,6 +17,10 @@ public class ShippingOrder:AggregateRoot
         Customer = customer;
         PackageOrder = packageOrder;
     }
+    public ShippingOrder()
+    {
+        
+    }
 
     public PackageOrder PackageOrder { get;private set; }
 
@@ -26,7 +31,8 @@ public class ShippingOrder:AggregateRoot
         PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
             PackageOrder.PurchaseOrderNumber,
             PurchaseOrderStage.BeingShipped, PackageOrder.PurchaseOrderGuid);
-        AddDomainEvent(new OrderBeingShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
+        RaiseEvent(new OrderBeingShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber, PackageOrder.TotalAmount.MoneyValue,
+            PackageOrder.ActivationStatus,PackageOrder.PurchaseOrderNumber, PackageOrder.OrderStage,Guid,Id,Customer.Name,Customer.Address,Customer.PhoneNumber));
         return Result.Ok();
     }
     public Result MarkOrderAsShipped()
@@ -36,8 +42,22 @@ public class ShippingOrder:AggregateRoot
         PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
             PackageOrder.PurchaseOrderNumber,
             PurchaseOrderStage.Shipped, PackageOrder.PurchaseOrderGuid);
-        AddDomainEvent(new OrderShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
+        RaiseEvent(new OrderShipped(PackageOrder.PurchaseOrderGuid,PackageOrder.PurchaseOrderNumber));
         return Result.Ok();
+    }
+    public void Apply(OrderBeingShipped @event) {
+
+        var money = Money.CreateInstance(@event.TotalAmount);
+        var customer = User.CreateInstance(@event.CustomerName, @event.CustomerAddress, @event.CustomerPhoneNumber);
+        var result = Result.Combine(money, customer);
+        if (result.IsFailure)
+            throw new DomainException(result.Message);
+        PackageOrder = new PackageOrder(money.Value, @event.ActivationStatus,
+            @event.PurchaseOrderNumber,
+            PurchaseOrderStage.BeingShipped, @event.PurchaseOrderGuid);
+        Guid = @event.ShippingOrderGuid;
+        Id = @event.ShippingOrderId;
+        Customer = customer.Value;
     }
 
     public Result MarkOrderAsDelivered()

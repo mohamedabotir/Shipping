@@ -1,11 +1,12 @@
 using Application.Commands;
 using Common.Repository;
 using Common.Result;
+using Domain.Entity;
 using Domain.Repositories;
 
 namespace Application.Usecases;
 
-public class OrderShippedUseCase(IShippingRepository shippingRepository,IUnitOfWork unitOfWork):IOrderShippedUseCase
+public class OrderShippedUseCase(IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IOrderShippedUseCase
 {
     public async Task<Result> MarkDocumentAsShipped(OrderShippedCommand shippedCommand)
     {
@@ -20,7 +21,7 @@ public class OrderShippedUseCase(IShippingRepository shippingRepository,IUnitOfW
                 return Result.Fail(shippingOrder.Message);
             await shippingRepository.UpdateShippingStage((int)shippingOrder.Value.Id,
                 shippingOrder.Value.PackageOrder.OrderStage);
-            await unitOfWork.SaveChangesAsync(shippingOrder.Value.DomainEvents);
+            await unitOfWork.SaveChangesAsync(shippingOrder.Value);
             return Result.Ok();
         }    
     }

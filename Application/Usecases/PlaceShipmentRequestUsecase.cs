@@ -8,7 +8,7 @@ using Domain.ValueObject;
 
 namespace Infrastructure.Consumer.Usecases;
 
-public class PlaceShipmentRequestUsecase(IShippingRepository shippingRepository,IUnitOfWork unitOfWork):IPlaceShipmentRequestUsecase
+public class PlaceShipmentRequestUsecase(IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IPlaceShipmentRequestUsecase
 {
     public async Task<Result> CreateShipment(PurchaseOrderApproved request)
     {

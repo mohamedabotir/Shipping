@@ -2,21 +2,23 @@ using Common.Entity;
 using Common.Events;
 using Common.Handlers;
 using Common.Repository;
+using Domain.Entity;
 using Domain.Repositories;
 using Infrastructure.Context;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Consumer.Context;
 
-public class UnitOfWork(ShippingOrderContext dbContext, IServiceProvider serviceProvider,IEventDispatcher eventDispatcher)
-    : IUnitOfWork
+public class UnitOfWork(ShippingOrderContext dbContext, IServiceProvider serviceProvider,IEventDispatcher eventDispatcher, IEventSourcing<ShippingOrder> eventSourcing)
+    : IUnitOfWork<ShippingOrder>
 {
-    public async Task<int> SaveChangesAsync(IEnumerable<DomainEventBase> events,CancellationToken cancellationToken = default)
+    public async Task<int> SaveChangesAsync(ShippingOrder aggregate,CancellationToken cancellationToken = default)
     {
      
         var result = await dbContext.SaveChangesAsync(cancellationToken);
-        if (events.Any())
-            await eventDispatcher.DispatchDomainEventsAsync(events);
+        if (aggregate.GetUncommittedEvents().Any())
+        await eventSourcing.SaveAsync(aggregate);
+
         return result;
     }
 

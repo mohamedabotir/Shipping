@@ -1,12 +1,13 @@
 using Application.Commands;
 using Common.Repository;
 using Common.Result;
+using Domain.Entity;
 using Domain.Repositories;
 using Infrastructure.Consumer.Usecases;
 
 namespace Application.Usecases;
 
-public class ShipOrderUseCase(IShippingRepository shippingRepository,IUnitOfWork unitOfWork):IShipOrderUsecase
+public class ShipOrderUseCase(IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IShipOrderUsecase
 {
     public async Task<Result> ShipOrder(StartShippingCommand command)
     {
@@ -21,7 +22,7 @@ public class ShipOrderUseCase(IShippingRepository shippingRepository,IUnitOfWork
                 return Result.Fail(shippingOrder.Message);
             await shippingRepository.UpdateShippingStage((int)shippingOrder.Value.Id,
                 shippingOrder.Value.PackageOrder.OrderStage);
-            await unitOfWork.SaveChangesAsync(shippingOrder.Value.DomainEvents);
+            await unitOfWork.SaveChangesAsync(shippingOrder.Value);
             return Result.Ok();
         }
     }

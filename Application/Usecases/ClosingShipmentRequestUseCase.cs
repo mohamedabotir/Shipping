@@ -1,11 +1,12 @@
 using Common.Events;
 using Common.Repository;
 using Common.Result;
+using Domain.Entity;
 using Domain.Repositories;
 
 namespace Application.Usecases;
 
-public class ClosingShipmentRequestUseCase(IShippingRepository shippingRepository,IUnitOfWork unitOfWork):IClosingShipmentRequestUseCase
+public class ClosingShipmentRequestUseCase(IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IClosingShipmentRequestUseCase
 {
     public async Task<Result> CloseShipment(OrderClosed @event)
     {

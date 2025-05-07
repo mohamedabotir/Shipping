@@ -16,7 +16,6 @@ using Infrastructure.Consumer.Context;
 using Infrastructure.Consumer.Repository;
 using Infrastructure.Consumer;
 using Infrastructure.Context;
-using Infrastructure.EventHandlers;
 using Infrastructure.GraphQL;
 using Infrastructure.MessageBroker;
 using Infrastructure.MessageBroker.Producers;
@@ -28,6 +27,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using EventHandler = Application.Handlers.EventHandler;
+using Domain.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 Action<DbContextOptionsBuilder> dbContextConfiguration = (e => e.UseSqlServer(builder.Configuration.GetConnectionString("ShippingOrder")));
@@ -49,11 +49,11 @@ BsonClassMap.RegisterClassMap<OrderBeingShipped>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IUnitOfWork<ShippingOrder>, UnitOfWork>();
 builder.Services.AddTransient<IEventConsumer<EventConsumer>, EventConsumer>();
 builder.Services.AddTransient<IEventRepository, EventRepository>();
 builder.Services.AddTransient<IShippingRepository, ShippingRepository>();
-builder.Services.AddTransient<IEventStore, PurchaseOrderEventStore>();
+builder.Services.AddTransient<IEventSourcing<ShippingOrder>, EventSourcing>();
 builder.Services.AddTransient<IProducer,Producer>();
 // UseCases
 builder.Services.AddTransient<IPlaceShipmentRequestUsecase, PlaceShipmentRequestUsecase>();
@@ -63,8 +63,6 @@ builder.Services.AddTransient<IClosingShipmentRequestUseCase, ClosingShipmentReq
 
 // Handlers
 builder.Services.AddTransient<IEventHandler, EventHandler>();
-builder.Services.AddTransient<IEventHandler<OrderBeingShipped>, OrderBeingShippedHandler>();
-builder.Services.AddTransient<IEventHandler<OrderShipped>, OrderShippedHandler>();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient<IRequestHandler<StartShippingCommand,Result>, StartShippingHandler>();
 builder.Services.AddTransient<IRequestHandler<OrderShippedCommand,Result>, DocumentAsShippedHandler>();
