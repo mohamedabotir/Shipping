@@ -1,4 +1,5 @@
-﻿using Common.Mongo.Producers;
+﻿using Common.Events;
+using Common.Mongo.Producers;
 using Common.Repository;
 using Infrastructure.Consumer;
 using Microsoft.Extensions.Options;
@@ -12,13 +13,16 @@ public class OutboxProcessor
     private readonly IProducer _producer;
     private readonly string _topic;
     private readonly AsyncRetryPolicy _retryPolicy;
+    private readonly EventTopicMapping _topicMapping;
 
 
-    public OutboxProcessor(IEventRepository eventRepo, IProducer producer, IOptions<Topic> options)
+    public OutboxProcessor(IEventRepository eventRepo, IProducer producer, IOptions<Topic> options, IOptions<EventTopicMapping> eventTopicMapping)
     {
         _eventRepo = eventRepo;
         _producer = producer;
         _topic = options.Value.TopicName;
+        _topicMapping = eventTopicMapping.Value;
+
         _retryPolicy = Policy
     .Handle<Exception>()
     .WaitAndRetryAsync(
@@ -40,7 +44,11 @@ public class OutboxProcessor
         {
             try
             {
-                await _producer.ProduceAsync(_topic, evt.EventBaseData);
+                    var topics = GetTopicsForEvent(evt.EventBaseData);
+                    foreach (var topic in topics)
+                    {
+                        await _producer.ProduceAsync(topic, evt.EventBaseData);
+                    }
                 await _eventRepo.MarkAsProcessed(evt.Id); 
             }
             catch (Exception ex)
@@ -56,5 +64,13 @@ public class OutboxProcessor
         }
 
         Log.Error("✅ Finished processing outbox events.");
+    }
+
+    private List<string> GetTopicsForEvent(DomainEventBase domainEvent)
+    {
+        var eventType = domainEvent.GetType().Name;
+        return _topicMapping.TopicMappings.TryGetValue(eventType, out var topics)
+            ? topics
+            : new List<string> { _topic };
     }
 }

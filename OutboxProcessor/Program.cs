@@ -38,6 +38,7 @@ try
             services.Configure<ShippingOrderConfig>(context.Configuration.GetSection("MongoConfig"));
             services.Configure<ProducerConfig>(context.Configuration.GetSection("ProducerConfig"));
             services.Configure<ElkLog>(context.Configuration.GetSection("ElkLog"));
+            services.Configure<EventTopicMapping>(context.Configuration.GetSection("EventTopicMapping"));
 
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
             BsonClassMap.RegisterClassMap<DomainEventBase>();
