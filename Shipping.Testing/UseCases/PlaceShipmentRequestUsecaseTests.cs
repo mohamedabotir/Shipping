@@ -41,13 +41,13 @@ public class PlaceShipmentRequestUsecaseTests
             PurchaseOrderStage.Approved
         );
 
-        _shippingRepoMock.Setup(r => r.Save(It.IsAny<ShippingOrder>()))
+        _shippingRepoMock.Setup(r => r.AddAsync(It.IsAny<ShippingOrder>()))
                          .Returns(Task.CompletedTask);
 
         var result = await _useCase.CreateShipment(request);
 
         Assert.IsTrue(result.IsSuccess);
-        _shippingRepoMock.Verify(r => r.Save(It.IsAny<ShippingOrder>()), Times.Once);
+        _shippingRepoMock.Verify(r => r.AddAsync(It.IsAny<ShippingOrder>()), Times.Once);
     }
 
     [Test]

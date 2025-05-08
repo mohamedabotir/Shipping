@@ -44,7 +44,7 @@ public class OrderShippedUseCaseTests
             .ReturnsAsync(shippingOrder);
 
         _shippingRepoMock
-            .Setup(r => r.UpdateShippingStage((int)shippingOrder.Id, PurchaseOrderStage.Shipped))
+            .Setup(r => r.UpdateShippingStageByPurchaseNumber(shippingOrder.PackageOrder.PurchaseOrderNumber, PurchaseOrderStage.Shipped))
             .Returns(Task.CompletedTask);
 
         _unitOfWorkMock
@@ -55,7 +55,7 @@ public class OrderShippedUseCaseTests
 
         Assert.IsTrue(result.IsSuccess);
         Assert.That(shippingOrder.PackageOrder.OrderStage, Is.EqualTo(PurchaseOrderStage.Shipped));
-        _shippingRepoMock.Verify(r => r.UpdateShippingStage((int)shippingOrder.Id, PurchaseOrderStage.Shipped), Times.Once);
+        _shippingRepoMock.Verify(r => r.UpdateShippingStageByPurchaseNumber(shippingOrder.PackageOrder.PurchaseOrderNumber, PurchaseOrderStage.Shipped), Times.Once);
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(shippingOrder, default), Times.Once);
     }
 

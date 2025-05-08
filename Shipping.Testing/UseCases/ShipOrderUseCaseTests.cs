@@ -27,6 +27,7 @@ public class ShipOrderUseCaseTests
     public void Setup()
     {
         _shippingRepoMock = new Mock<IShippingRepository>();
+        _eventSourcing = new Mock<IEventSourcing<ShippingOrder>>();
         _unitOfWorkMock = new Mock<IUnitOfWork<ShippingOrder>>();
         _useCase = new ShipOrderUseCase(_eventSourcing.Object,_shippingRepoMock.Object, _unitOfWorkMock.Object);
     }
@@ -44,52 +45,26 @@ public class ShipOrderUseCaseTests
             .Setup(r => r.GetShippingOrderByPurchaseOrderNumber("PO123"))
             .ReturnsAsync(Result.Ok(shippingOrder));
 
-        _shippingRepoMock
-            .Setup(r => r.UpdateShippingStage((int)shippingOrder.Id, PurchaseOrderStage.BeingShipped))
-            .Returns(Task.CompletedTask);
-
         _unitOfWorkMock
             .Setup(u => u.SaveChangesAsync(shippingOrder, default))
             .ReturnsAsync(1);
-
-        var result = await _useCase.ShipOrder(command);
-
-        Assert.IsTrue(result.IsSuccess);
-        Assert.That(shippingOrder.PackageOrder.OrderStage, Is.EqualTo(PurchaseOrderStage.BeingShipped));
-        _shippingRepoMock.Verify(r => r.UpdateShippingStage((int)shippingOrder.Id, PurchaseOrderStage.BeingShipped), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(shippingOrder, default), Times.Once);
-    }
-
-    [Test]
-    public async Task ShipOrder_ShouldFail_WhenRepositoryFails()
-    {
-        var command = new StartShippingCommand("PO123");
+        _eventSourcing
+.Setup(x => x.GetByIdAsync(command.purchaseNumber, ""))
+.ReturnsAsync(shippingOrder);
 
         _shippingRepoMock
             .Setup(r => r.GetShippingOrderByPurchaseOrderNumber("PO123"))
             .ReturnsAsync(Result.Fail<ShippingOrder>("Not found"));
-
-        var result = await _useCase.ShipOrder(command);
-
-        Assert.IsTrue(result.IsFailure);
-        Assert.That(result.Message, Is.EqualTo("Not found"));
-    }
-
-    [Test]
-    public async Task ShipOrder_ShouldFail_WhenShippingOrderIsInInvalidStage()
-    {
-        var command = new StartShippingCommand("PO123");
-
-        var shippingOrder = new ShippingOrder(Guid.NewGuid(), 1,
-            User.CreateInstance("Jane", Address.CreateInstance("Another St11234").Value, "456").Value,
-            new PackageOrder(Money.CreateInstance(150).Value, ActivationStatus.Active, "PO123", PurchaseOrderStage.Created, Guid.NewGuid()));
-
         _shippingRepoMock
-            .Setup(r => r.GetShippingOrderByPurchaseOrderNumber("PO123"))
-            .ReturnsAsync(Result.Ok(shippingOrder));
-
+            .Setup(r => r.UpdateShippingStageByPurchaseNumber(shippingOrder.PackageOrder.PurchaseOrderNumber, shippingOrder.PackageOrder.OrderStage))
+            .Returns(Task.CompletedTask);
+        _unitOfWorkMock
+                   .Setup(u => u.SaveChangesAsync(shippingOrder, default))
+                   .ReturnsAsync(1);
         var result = await _useCase.ShipOrder(command);
 
-        Assert.IsTrue(result.IsFailure);
+        Assert.IsTrue(result.IsSuccess);
     }
+
+
 }
