@@ -17,7 +17,7 @@ public class OrderShippedUseCase(IEventSourcing<ShippingOrder> eventSourcing,ISh
             var shipmentResult = shippingOrder.MarkOrderAsShipped();
             if (shipmentResult.IsFailure)
                 return Result.Fail(shipmentResult.Message);
-            await shippingRepository.UpdateShippingStage((int)shippingOrder.Id,
+            await shippingRepository.UpdateShippingStageByPurchaseNumber(shippingOrder.PackageOrder.PurchaseOrderNumber,
                 shippingOrder.PackageOrder.OrderStage);
             await unitOfWork.SaveChangesAsync(shippingOrder);
             return Result.Ok();

@@ -6,17 +6,27 @@ using Domain.Repositories;
 
 namespace Application.Usecases;
 
-public class ClosingShipmentRequestUseCase(IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IClosingShipmentRequestUseCase
+public class ClosingShipmentRequestUseCase(IEventSourcing<ShippingOrder> eventSourcing, IShippingRepository shippingRepository,IUnitOfWork<ShippingOrder> unitOfWork):IClosingShipmentRequestUseCase
 {
     public async Task<Result> CloseShipment(OrderClosed @event)
     {
-            var result = await shippingRepository.GetShippingOrderByPurchaseOrderNumberWithFactory(@event.PoNumber);
-            if(result.IsFailure)
-                return Result.Fail(result.Message);
-            var shipment  = result.Value.MarkOrderAsDelivered();
+        try
+        {
+
+       
+            var result = await eventSourcing.GetByIdAsync(@event.PoNumber);
+           
+            var shipment  = result.MarkOrderAsDelivered(@event);
             if(shipment.IsFailure)
                 return Result.Fail(shipment.Message);
-            await shippingRepository.UpdateShippingStageWithFactory((int)result.Value.Id,result.Value.PackageOrder.OrderStage);
+            await shippingRepository.UpdateShippingStageByPurchaseNumber(result.PackageOrder.PurchaseOrderNumber,result.PackageOrder.OrderStage);
+        await unitOfWork.SaveChangesAsync(result);
             return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
     }
 }

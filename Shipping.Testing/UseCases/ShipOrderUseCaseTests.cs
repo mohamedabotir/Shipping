@@ -12,6 +12,7 @@ using Application.Commands;
 using Common.Constants;
 using Common.ValueObject;
 using Domain.ValueObject;
+using Common.Events;
 namespace Usecases;
 
 [TestFixture]
@@ -19,6 +20,7 @@ public class ShipOrderUseCaseTests
 {
     private Mock<IShippingRepository> _shippingRepoMock;
     private Mock<IUnitOfWork<ShippingOrder>> _unitOfWorkMock;
+    private Mock<IEventSourcing<ShippingOrder>> _eventSourcing;
     private ShipOrderUseCase _useCase;
 
     [SetUp]
@@ -26,7 +28,7 @@ public class ShipOrderUseCaseTests
     {
         _shippingRepoMock = new Mock<IShippingRepository>();
         _unitOfWorkMock = new Mock<IUnitOfWork<ShippingOrder>>();
-        _useCase = new ShipOrderUseCase(_shippingRepoMock.Object, _unitOfWorkMock.Object);
+        _useCase = new ShipOrderUseCase(_eventSourcing.Object,_shippingRepoMock.Object, _unitOfWorkMock.Object);
     }
 
     [Test]

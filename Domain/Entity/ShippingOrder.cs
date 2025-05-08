@@ -21,7 +21,11 @@ public class ShippingOrder:AggregateRoot
     {
         
     }
-
+    public static ShippingOrder CreateShippingOrder(Guid guid, long orderId, User customer, PackageOrder packageOrder, PurchaseOrderApproved @event) {
+        var aggregate = new ShippingOrder(guid, orderId, customer, packageOrder);
+        aggregate.RaiseEvent(@event);
+        return aggregate;
+    }
     public PackageOrder PackageOrder { get;private set; }
 
     public Result ShipOrder()
@@ -60,17 +64,37 @@ public class ShippingOrder:AggregateRoot
         Customer = customer.Value;
     }    
     public void Apply(OrderShipped @event) {
-        PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus, @event.PoNumber, PackageOrder.OrderStage, @event.PurchaseOrderGuid);
+        PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus, @event.PoNumber, PurchaseOrderStage.Shipped, @event.PurchaseOrderGuid);
     }
 
-    public Result MarkOrderAsDelivered()
+    public Result MarkOrderAsDelivered(OrderClosed orderClosedEvent)
     {
         if(PackageOrder.OrderStage != PurchaseOrderStage.Shipped)
             return Result.Fail("Order should be on Shipped stage to close  shipment .");
         PackageOrder = new PackageOrder(PackageOrder.TotalAmount, PackageOrder.ActivationStatus,
             PackageOrder.PurchaseOrderNumber,
             PurchaseOrderStage.Closed, PackageOrder.PurchaseOrderGuid);
+        RaiseEvent(orderClosedEvent);
         return Result.Ok();
+    }
+    public void Apply(OrderClosed @event)
+    {
+        PackageOrder = new PackageOrder(PackageOrder.TotalAmount,PackageOrder.ActivationStatus,PackageOrder.PurchaseOrderNumber
+            ,PurchaseOrderStage.Closed,PackageOrder.PurchaseOrderGuid);
+    }
+
+    public void Apply(PurchaseOrderApproved @event)
+    {
+        var address = Address.CreateInstance(@event.CustomerAddress);
+        if (address.IsFailure)
+            return;
+        var user = User.CreateInstance(@event.CustomerName, address.Value, @event.CustomerPhoneNumber);
+        if (user.IsFailure)
+            return;
+        var package = new PackageOrder(@event.TotalAmount, @event.ActivationStatus, @event.PurchaseOrderNumber, @event.OrderStage,
+            @event.PurchaseOrderId);
+        Customer = user.Value;
+        PackageOrder = package;
     }
     public User Customer { get; private set; }
     

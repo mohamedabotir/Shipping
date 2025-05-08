@@ -26,7 +26,7 @@ public class ShippingRepository: IShippingRepository
             .MapDomainToPoco(shippingOrder);
        await context
            .AddAsync(entity);
-       var result = await context.SaveChangesAsync();
+         await context.SaveChangesAsync();
     }
 
     public  Task<Result<ShippingOrder>> GetShippingOrderByPurchaseOrderNumber(string purchaseOrderNumber)
@@ -41,6 +41,13 @@ public class ShippingRepository: IShippingRepository
     {
         var shippingOrder = _shippingOrderContext.ShippingOrder
             .Single(e => e.OrderId == orderId);
+        shippingOrder.OrderStage = stage;
+      return  Task.CompletedTask;
+    }
+    public Task UpdateShippingStageByPurchaseNumber(string orderId,PurchaseOrderStage stage)
+    {
+        var shippingOrder = _shippingOrderContext.ShippingOrder
+            .Single(e => e.PurchaseOrderNumber == orderId);
         shippingOrder.OrderStage = stage;
       return  Task.CompletedTask;
     }
@@ -59,5 +66,13 @@ public class ShippingRepository: IShippingRepository
         UpdateShippingStage(orderId, stage);
         context.SaveChanges();
         return Task.CompletedTask;
+    }
+
+    public async Task AddAsync(ShippingOrder order)
+    {
+        var entity = new ShippingOrderPoco()
+            .MapDomainToPoco(order);
+        await _shippingOrderContext.ShippingOrder
+            .AddAsync(entity);
     }
 }

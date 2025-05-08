@@ -49,6 +49,9 @@ SerilogConfigurator.Configure(builder.Configuration);
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 BsonClassMap.RegisterClassMap<DomainEventBase>();
 BsonClassMap.RegisterClassMap<OrderBeingShipped>();
+BsonClassMap.RegisterClassMap<OrderShipped>();
+BsonClassMap.RegisterClassMap<PurchaseOrderApproved>();
+BsonClassMap.RegisterClassMap<OrderClosed>();
 
 
 builder.Services.AddEndpointsApiExplorer();

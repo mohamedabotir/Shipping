@@ -75,7 +75,7 @@ namespace UnitTests
             var shipped = new PackageOrder(Money.CreateInstance(100).Value, ActivationStatus.Active, "PO123", PurchaseOrderStage.Shipped, Guid.NewGuid());
             var order = new ShippingOrder(Guid.NewGuid(), 1, CreateTestUser(), shipped);
 
-            var result = order.MarkOrderAsDelivered();
+            var result = order.MarkOrderAsDelivered(new OrderClosed(Guid.NewGuid(), "PO123"));//TODO : Update it to fit
 
             Assert.IsTrue(result.IsSuccess);
             Assert.That(order.PackageOrder.OrderStage, Is.EqualTo(PurchaseOrderStage.Closed));
@@ -86,7 +86,7 @@ namespace UnitTests
         {
             var order = new ShippingOrder(Guid.NewGuid(), 1, CreateTestUser(), CreateApprovedPackageOrder());
 
-            var result = order.MarkOrderAsDelivered();
+            var result = order.MarkOrderAsDelivered(new OrderClosed(Guid.NewGuid(), "PO123"));//TODO : Update it to fit
 
             Assert.IsFalse(result.IsSuccess);
             Assert.That(result.Message, Is.EqualTo("Order should be on Shipped stage to close  shipment ."));

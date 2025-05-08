@@ -7,59 +7,78 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Consumer;
 
-     public sealed class EventConsumer(
-         IOptions<ConsumerConfig> consumerConfig,
-         IEventHandler eventHandler,
-         IServiceScopeFactory serviceProvider)
-         : IEventConsumer<EventConsumer>
-     {
-        private ConsumerConfig _consumerConfig { get; } = consumerConfig.Value;
-        private IEventHandler _eventHandler { get;  } = eventHandler;
-        private IServiceScopeFactory _serviceProvider { get; } = serviceProvider;
+public sealed class EventConsumer(
+    IOptions<ConsumerConfig> consumerConfig,
+    IServiceScopeFactory serviceScopeFactory)
+    : IEventConsumer<EventConsumer>
+{
+    private readonly ConsumerConfig _consumerConfig = consumerConfig.Value;
+    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
 
-        public void Consume(string Topic)
+    public void Consume(string topic)
+    {
+        using var consumer = new ConsumerBuilder<string, string>(_consumerConfig)
+            .SetKeyDeserializer(Deserializers.Utf8)
+            .SetValueDeserializer(Deserializers.Utf8)
+            .Build();
+
+        consumer.Subscribe(topic);
+
+        while (true)
         {
-            using var consumer = new ConsumerBuilder<string, string>(_consumerConfig)
-                            .SetKeyDeserializer(Deserializers.Utf8)
-                            .SetValueDeserializer(Deserializers.Utf8)
-                            .Build();
-            consumer.Subscribe(Topic);
-            while (true)
+            ConsumeResult<string, string>? consumeResult = null;
+
+            try
             {
-                ConsumeResult<string, string> consumeResult = null;
+                consumeResult = consumer.Consume();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Kafka consumption failed: {ex.Message}");
+                continue;
+            }
 
-                try
-                {
+            if (consumeResult?.Message == null) continue;
 
-                    consumeResult = consumer.Consume();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("failed :{0}", ex.Message);
-                    throw;
-                }
-                if (consumeResult?.Message == null) continue;
-                try
-                {
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                    using (var sc = scope.ServiceProvider.CreateScope())
-                    {
-                        var options = new JsonSerializerOptions() { Converters = { new EventJsonConverter() } };
-                        var @event = JsonSerializer.Deserialize<DomainEventBase>(consumeResult.Message.Value, options);
-                        var handlers = _eventHandler.GetType().GetMethod("On", new Type[] { @event.GetType() });
+            try
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
 
-                        if (handlers == null)
-                            throw new ArgumentNullException($"Handler Didn't support method with type : {@event.GetType().Name} ");
-                        handlers.Invoke(_eventHandler, new Object[] { @event });
-                        consumer.Commit(consumeResult);
-                    }
-                    }
-                }
-                catch (Exception e)
+                var eventHandler = scope.ServiceProvider.GetRequiredService<IEventHandler>();
+
+                var options = new JsonSerializerOptions
                 {
-                    Console.WriteLine(e.Message);
+                    Converters = { new EventJsonConverter() }
+                };
+
+                var @event = JsonSerializer.Deserialize<DomainEventBase>(consumeResult.Message.Value, options);
+
+                if (@event == null)
+                {
+                    Console.WriteLine("Failed to deserialize event");
+                    continue;
                 }
+
+                var handlerMethod = eventHandler.GetType()
+                    .GetMethod("On", new[] { @event.GetType() });
+
+                if (handlerMethod == null)
+                {
+                    Console.WriteLine($"No handler found for event type: {@event.GetType().Name}");
+                    continue;
+                }
+
+                var task = (Task?)handlerMethod.Invoke(eventHandler, new object[] { @event });
+
+                if (task != null)
+                    task.GetAwaiter().GetResult();
+
+                consumer.Commit(consumeResult);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while processing message: {ex.Message}");
             }
         }
     }
+}

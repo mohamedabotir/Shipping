@@ -21,8 +21,9 @@ public class PlaceShipmentRequestUsecase(IShippingRepository shippingRepository,
                 return Result.Fail(user.Message);
             var package = new PackageOrder(request.TotalAmount,request.ActivationStatus,request.PurchaseOrderNumber,request.OrderStage,
                 request.PurchaseOrderId);
-            var shippingOrder = new ShippingOrder(Guid.NewGuid(),0, user.Value,package);
-            await shippingRepository.Save(shippingOrder);
+            var shippingOrder =  ShippingOrder.CreateShippingOrder(Guid.NewGuid(),0, user.Value,package, request);
+            await shippingRepository.AddAsync(shippingOrder);
+            await unitOfWork.SaveChangesAsync(shippingOrder);
             return Result.Ok();
         
     }
